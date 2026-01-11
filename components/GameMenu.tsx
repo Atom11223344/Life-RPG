@@ -1,5 +1,5 @@
 "use client"
-
+import { signOut } from "next-auth/react"
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { undoLastQuest, resetCharacter } from "@/app/actions"
@@ -99,7 +99,20 @@ export function GameMenu({ currentPlan }: { currentPlan: string }) {
               <button onClick={handleResetClick} disabled={loading} className="px-4 py-3 hover:bg-secondary flex items-center gap-2 text-sm font-medium text-red-500 w-full text-left">
                 <span>💣</span> Reset Character
               </button>
-              
+              {/* ✅ แทรกเส้นคั่น (Divider) เพื่อความสวยงาม */}
+            <hr className="border-slate-700 my-2" />
+
+            {/* ✅ เพิ่มปุ่ม LOGOUT ตรงนี้ครับ (ล่างสุด) */}
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="w-full text-left px-4 py-3 text-red-400 hover:bg-red-950/30 hover:text-red-300 rounded-lg flex items-center gap-3 transition-all font-bold group"
+            >
+              {/* ไอคอนประตูทางออก */}
+              <div className="w-8 h-8 rounded-full bg-red-900/20 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
+                🚪
+              </div>
+              Sign Out
+            </button>
               
             </div>
           </div>
