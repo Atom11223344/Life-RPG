@@ -1,26 +1,243 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* --- ☀️ Light Mode: ธีมกระดาษเก่า (Parchment) --- */
+    /* Background: สีครีมกระดาษ (#fbf7f5) */
+    --background: 30 33% 97%; 
+    /* Foreground: สีหมึกน้ำตาลเข้ม (#2a2a2a) */
+    --foreground: 20 14.3% 4.1%;
+
+    --card: 30 33% 96%;
+    --card-foreground: 20 14.3% 4.1%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+ 
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 60 9.1% 97.8%;
+ 
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+ 
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+ 
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 24.6 95% 53.1%;
+    --radius: 0.75rem;
+  }
+ 
+  .dark {
+    /* --- 🌙 Dark Mode: ธีม Slate (เดิม) --- */
+    /* Background: Slate-950 (#020617) */
+    --background: 222.2 84% 4.9%;
+    /* Foreground: Slate-100 */
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
   }
 }
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    /* บังคับใช้สีจากตัวแปรด้านบน */
+    @apply bg-background text-foreground;
+  }
+}
+/* ... (ต่อท้ายไฟล์) */
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes float-up {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+}
+
+.animate-float-up {
+  animation: float-up 1s ease-out forwards;
+}
+/* src/app/globals.css */
+
+/* ... (โค้ดเดิมด้านบน ห้ามลบ) ... */
+
+
+/* src/app/globals.css */
+
+/* ... (โค้ดส่วนอื่นห้ามลบ) ... */
+
+
+/* 🔥🔥🔥 THEME: DRIVER.JS (Dark Gold RPG Edition) 🔥🔥🔥 */
+
+/* 1. 🚫 ซ่อนลูกศรทิ้งไปเลย */
+.driver-popover-arrow {
+    display: none !important;
+}
+
+/* 2. 🎨 ตัวกล่อง Popover (สีดำ-ทอง) */
+/* ต้องมี .life-rpg-popover ติดกับ .driver-popover */
+.driver-popover.life-rpg-popover {
+    background-color: #0f172a !important; /* พื้นหลังสีดำเข้ม */
+    color: #f8fafc !important;             /* ตัวหนังสือสีขาว */
+    
+    /* เส้นขอบทอง */
+    border: 2px solid #eab308 !important; 
+    border-radius: 16px !important;
+    
+    /* Padding & Width */
+    padding: 24px !important;
+    max-width: 350px !important;
+    font-family: inherit !important;
+    
+    /* ✨ ออร่าแสงสีทอง (Glow Effect) */
+    box-shadow: 0 0 30px rgba(234, 179, 8, 0.3),
+                inset 0 0 20px rgba(234, 179, 8, 0.1) !important;
+    
+    /* Animation: ลอยขึ้นมา */
+    animation: popover-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes popover-fade-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 3. 📝 หัวข้อ (Title) */
+.driver-popover.life-rpg-popover .driver-popover-title {
+    font-size: 1.5rem !important;
+    font-weight: 900 !important;
+    color: #eab308 !important; /* สีทอง */
+    margin-bottom: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.2 !important;
+}
+
+/* 4. 📄 เนื้อหา (Description) */
+.driver-popover.life-rpg-popover .driver-popover-description {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    color: #cbd5e1 !important; /* สีเทาอ่อน */
+    margin-bottom: 24px !important;
+}
+
+/* 5. 🔘 ปุ่มกด (Footer) */
+.driver-popover.life-rpg-popover .driver-popover-footer {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    margin-top: 10px !important;
+}
+
+.driver-popover.life-rpg-popover button {
+    border-radius: 8px !important;
+    padding: 10px 20px !important;
+    font-weight: 800 !important;
+    font-size: 0.9rem !important;
+    border: none !important;
+    cursor: pointer !important;
+    text-shadow: none !important;
+    transition: all 0.2s ease !important;
+}
+
+/* ปุ่ม Prev */
+.driver-popover.life-rpg-popover .driver-popover-prev-btn {
+    background-color: transparent !important;
+    border: 1px solid #64748b !important;
+    color: #94a3b8 !important;
+}
+.driver-popover.life-rpg-popover .driver-popover-prev-btn:hover {
+    background-color: #1e293b !important;
+    color: white !important;
+    border-color: white !important;
+}
+
+/* ปุ่ม Next / Done (สีทอง) */
+.driver-popover.life-rpg-popover .driver-popover-next-btn, 
+.driver-popover.life-rpg-popover .driver-popover-done-btn {
+    background-color: #eab308 !important;
+    color: #0f172a !important; /* ตัวหนังสือดำ */
+    box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+}
+
+.driver-popover.life-rpg-popover .driver-popover-next-btn:hover,
+.driver-popover.life-rpg-popover .driver-popover-done-btn:hover {
+    background-color: #facc15 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(234, 179, 8, 0.5);
+}
+
+/* 6. ตัวเลข Progress (1 of 4) */
+.driver-popover.life-rpg-popover .driver-popover-progress-text {
+    color: #64748b !important;
+    font-size: 0.8rem !important;
+}
+/* src/app/globals.css */
+
+/* ... (โค้ดเดิมด้านบน ห้ามลบ) ... */
+
+
+/* 🔥 7. ✖️ ปรับปุ่มกากบาท (Close Button) ให้ใหญ่สะใจ */
+
+.driver-popover.life-rpg-popover .driver-popover-close-btn {
+    /* ปรับขนาดตรงนี้ครับ (เดิมๆ มันประมาณ 18px) */
+    font-size: 28px !important; 
+    
+    /* สีของกากบาท */
+    color: #64748b !important; /* สีเทาเข้ม */
+    
+    /* จัดตำแหน่งให้อยู่มุมสวยๆ */
+    top: 5px !important;
+    right: 5px !important;
+    
+    /* ทำให้กดง่ายขึ้น */
+    padding: 5px !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border-radius: 50% !important;
+    transition: all 0.2s !important;
+}
+
+/* ตอนเอาเมาส์ชี้ (Hover) ให้เป็นสีแดง + พื้นหลังจางๆ */
+.driver-popover.life-rpg-popover .driver-popover-close-btn:hover {
+    color: #ef4444 !important; /* สีแดง */
+    background-color: rgba(239, 68, 68, 0.1) !important; /* พื้นหลังแดงจางๆ */
+    transform: rotate(90deg) !important; /* หมุนติ้วๆ */
 }

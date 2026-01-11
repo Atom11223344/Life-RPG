@@ -1,0 +1,162 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- ส่วนที่ 1: NextAuth (ระบบ Login) ---
+// ตาราง User หลัก (ผูกกับ Google Email)
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String?     @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  
+  // 1 User มีได้หลายตัวละคร (Relation)
+  characters    Character[] 
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- ส่วนที่ 2: Game System (ตัวละคร & เควส) ---
+
+model Character {
+  id          String   @id @default(cuid())
+  userId      String?  
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // ข้อมูลทั่วไป
+  name        String   // ชื่อตัวละคร
+  class       String   // อาชีพ เช่น Warrior, Mage, Novice
+  avatarUrl   String?  // ลิงก์รูปจาก DiceBear
+  
+  // Level & Stats
+  level       Int      @default(1)
+  currentXp   Int      @default(0)
+  nextLevelXp Int      @default(100)
+  
+  str         Int      @default(5)
+  int         Int      @default(5)
+  vit         Int      @default(5)
+  
+  // ระบบเวลา & วันพัก
+  lastLoginDate DateTime @default(now()) // เอาไว้เช็ค Decay (สนิมเกาะ)
+  restDay       Int?     // 0=Sun, 1=Mon, ..., 6=Sat (วันที่จะไม่มีเควสหนัก)
+
+  quests      QuestLog[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  plan          String   @default("RANDOM")
+
+  // ✅ [เพิ่มใหม่ 2 บรรทัดนี้] สำหรับระบบ Streak
+  streak        Int        @default(0)
+  lastTaskDate  DateTime?
+  // ✅ เพิ่ม field นี้: วันที่เริ่มใช้แผน (เอาไว้คำนวณ Loop)
+  planStartDate DateTime   @default(now())
+
+  // ✅ เพิ่ม Relation ไปหาตาราง Routine
+  routines      Routine[]
+}
+
+// Master List ของเควสทั้งหมด (ที่มีในระบบ)
+model Quest {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  xpReward    Int
+  statType    String   // STR, INT, VIT
+  statReward  Int
+  
+  questLogs   QuestLog[] // เควสนี้ถูกทำไปกี่ครั้ง (ของเดิม)
+  
+  // ✅ เพิ่มบรรทัดนี้ครับ! เพื่อให้ความสัมพันธ์สมบูรณ์
+  routines    Routine[] 
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// prisma/schema.prisma
+
+// prisma/schema.prisma
+
+model QuestLog {
+  id          String    @id @default(cuid())
+  completedAt DateTime  @default(now())
+
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  // เปลี่ยนเป็น Optional (?) เพื่อรองรับ Gym Quest / Bonus ที่ไม่มีจริงใน DB
+  questId     String?
+  quest       Quest?    @relation(fields: [questId], references: [id])
+
+  // ✅ เพิ่ม 2 ช่องนี้ใหม่
+  questTitle  String    @default("Activity") // เก็บชื่อเควสไว้เลย (เผื่อเควสต้นทางหาย)
+  customId    String?   // เก็บ ID ของพวก Gym Quest หรือ Bonus (เช่น 'gym-d1-1')
+}
+
+// Model อื่นๆ (User, Character, Quest) ปล่อยไว้เหมือนเดิมครับ
+// อย่าลืม Character ต้องมี field: plan String @default("RANDOM") ด้วยนะครับ (จากรอบที่แล้ว)
+
+enum StatType {
+  STR
+  INT
+  VIT
+}
+// ✅ สร้าง Model ใหม่: เก็บตารางกิจวัตร
+model Routine {
+  id          String    @id @default(cuid())
+  characterId String
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  
+  dayIndex    Int       // วันที่เท่าไหร่ของลูป (เริ่มที่ 1)
+  questId     String    // ต้องทำเควสไหนในวันนั้น
+  quest       Quest     @relation(fields: [questId], references: [id])
+
+  @@unique([characterId, dayIndex, questId]) // ห้ามซ้ำกันในวันเดียวกัน
+}
