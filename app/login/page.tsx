@@ -7,10 +7,11 @@ import { useState, useEffect } from "react"
 export default function LoginPage() {
   const [isLineBrowser, setIsLineBrowser] = useState(false)
 
-  // ✅ เช็คว่าเปิดจาก Line หรือไม่
-  useEffect(() => {
+useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor
-    if (/Line/i.test(userAgent)) {
+    
+    // ✅ อัปเดต Regex: ดัก LINE, Facebook (FBAN/FBAV) และ Instagram
+    if (/Line|FBAN|FBAV|Instagram/i.test(userAgent)) {
       setIsLineBrowser(true)
     }
   }, [])
@@ -35,7 +36,7 @@ export default function LoginPage() {
           {isLineBrowser ? (
             <div className="bg-red-950/50 border border-red-500/50 p-6 rounded-xl animate-pulse text-left">
                 <h3 className="text-lg font-bold text-red-400 mb-2 flex items-center gap-2">
-                    ⚠️ เปิดผ่าน LINE ไม่ได้ครับ
+                    ⚠️ เปิดผ่านแอป Social Media ไม่ได้ครับ
                 </h3>
                 <p className="text-sm text-slate-300 mb-4">
                     Google บล็อกการ Login ผ่านแอป LINE เพื่อความปลอดภัย
